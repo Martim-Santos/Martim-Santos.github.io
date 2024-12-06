@@ -10,23 +10,22 @@
     <a-scene
       embedded
       vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: true;"
     >
-      <!-- Preloading Assets -->
       <a-assets>
         <img id="earth-texture" src="images/earth-sphere.jpg" />
       </a-assets>
 
-      <!-- Sphere Positioned at Specific Geolocation -->
       <a-sphere
         material="src: #earth-texture; roughness: 1; metalness: 0;"
-        radius="100"
+        radius="50"
         gps-entity-place="latitude: 39.479783; longitude: -8.337586;"
-      >
-      </a-sphere>
+        look-at="[gps-camera]"
+      ></a-sphere>
 
-      <!-- Camera to Render AR Content -->
-      <a-camera gps-camera rotation-reader></a-camera>
+      <a-camera gps-camera rotation-reader 
+        gps-camera="simulateLatitude: 39.479783; simulateLongitude: -8.337586;"
+      ></a-camera>
     </a-scene>
   </body>
 </html>

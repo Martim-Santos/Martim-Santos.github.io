@@ -1,68 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AR Sphere Example</title>
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/three.js/build/ar-threex-location-only.js'></script>
-    <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js'></script>
-    <style>
-      #start-button {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        font-size: 20px;
-        cursor: pointer;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-      }
-    </style>
-  </head>
-  <body style="margin: 0; overflow: hidden;">
-    <!-- Start Button -->
-    <button id="start-button" onclick="startAR()">Start AR</button>
-
-    <!-- AR Scene -->
-    <a-scene
-      id="ar-scene"
-      style="display: none;"
-      embedded
-      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: true;"
-    >
-      <a-sphere
-        gps-entity-place="latitude: 39.479783; longitude: -8.337586;"
-        material="color: red;"
-        radius="50"
-        look-at="[gps-camera]"
-      ></a-sphere>
-      <a-camera gps-camera rotation-reader></a-camera>
-    </a-scene>
-
-    <script>
-      function startAR() {
-        // Request motion and orientation permissions for iOS
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-          DeviceOrientationEvent.requestPermission()
-            .then(permissionState => {
-              if (permissionState === 'granted') {
-                document.getElementById('start-button').style.display = 'none';
-                document.getElementById('ar-scene').style.display = 'block';
-              } else {
-                alert('Motion access denied');
-              }
-            })
-            .catch(console.error);
-        } else {
-          // Non-iOS devices
-          document.getElementById('start-button').style.display = 'none';
-          document.getElementById('ar-scene').style.display = 'block';
-        }
-      }
-    </script>
-  </body>
+<head>
+<title>AR.js A-Frame Location-based</title>
+<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+<script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/three.js/build/ar-threex-location-only.js'></script>
+<script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js'></script>
+</head>
+<body>
+<a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false' renderer='antialias: true; alpha: true'>
+    <a-camera gps-new-camera='gpsMinDistance: 5'></a-camera>
+    <a-entity material='color: red' geometry='primitive: box' gps-new-entity-place="latitude: 39.479842; longitude: -8.337769" scale="10 10 10"></a-entity>
+</a-scene>
+</body>
 </html>

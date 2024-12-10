@@ -1,31 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <title>GeoAR Earth Sphere</title>
+    <meta charset="utf-8" />
+    <title>GeoAR Sphere Example</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
   </head>
-  <body style="margin: 0px; overflow: hidden;">
+  <body style="margin: 0; overflow: hidden;">
     <a-scene
       embedded
       vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: true;"
+      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
     >
-      <a-assets>
-        <img id="earth-texture" src="images/earth-sphere.jpg" />
-      </a-assets>
-
+      <!-- Add a sphere to a specific latitude and longitude -->
       <a-sphere
-        material="src: #earth-texture; roughness: 1; metalness: 0;"
+        material="color: blue; roughness: 1; metalness: 0;"
         radius="50"
-        gps-entity-place="latitude: 39.479783; longitude: -8.337586;"
-        look-at="[gps-camera]"
-      ></a-sphere>
+        gps-entity-place="latitude: 39.479842; longitude: -8.337769;"
+      >
+      </a-sphere>
 
-      <a-camera gps-camera rotation-reader 
-        gps-camera="simulateLatitude: 39.479783; simulateLongitude: -8.337586;"
-      ></a-camera>
+      <!-- Camera to handle AR geolocation -->
+      <a-camera gps-camera rotation-reader></a-camera>
     </a-scene>
   </body>
 </html>

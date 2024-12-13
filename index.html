@@ -46,6 +46,10 @@
     sceneEl.addEventListener('loaded', () => {
       console.log('All assets are loaded, AR is starting.');
     });
+    const esfera = document.querySelector('earth-sphere');
+    sceneEl.addEventListener('loaded', () => {
+      console.log('earth is loaded, AR is starting.');
+    });
 
     // JavaScript for interactivity
     document.querySelector('#earth-sphere').addEventListener('click', () => {

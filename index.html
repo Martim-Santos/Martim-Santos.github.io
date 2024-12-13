@@ -1,73 +1,73 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>AR.js A-Frame Location-based</title>
-<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-<script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/three.js/build/ar-threex-location-only.js'></script>
-<script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js'></script>
+  <title>AR.js A-Frame Location-based</title>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script type='text/javascript'
+    src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/three.js/build/ar-threex-location-only.js'></script>
+  <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js'></script>
 </head>
+
 <body>
+  <a-scene vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false"
+    renderer="antialias: true; alpha: true" loading-screen="enabled: true">
 
-  
-  <a-assets timeout="30000">
-    <img id="earth-image" src="images/earth-sphere.jpg">
-  </a-assets>  
+    <a-assets timeout="30000">
+      <img id="earth-image" src="images/earth-sphere.jpg">
+    </a-assets>
 
-  <a-scene 
-  vr-mode-ui="enabled: false" 
-  arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false" 
-  renderer="antialias: true; alpha: true" 
-  loading-screen="enabled: true">
-  
-  <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
-  
-  <a-entity 
-      id="earth-sphere"
-      material="src: #earth-image; opacity: 0.9" 
-      geometry="primitive: sphere"  
-      gps-new-entity-place="latitude: 39.599564; longitude: -8.391645" 
-      scale="5 5 5"
+
+
+    <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
+
+    <a-entity id="earth-sphere" material="src: #earth-image; opacity: 0.9" geometry="primitive: sphere"
+      gps-new-entity-place="latitude: 39.599564; longitude: -8.391645" scale="5 5 5"
       animation="property: rotation; to: 0 360 0; loop: true; dur: 8000">
-  </a-entity>
-
-  <!-- Quiz Panel -->
-  <a-entity id="quiz-panel" visible="false" position="0 1.5 -3" geometry="primitive: plane; height: 2; width: 3" material="color: white; opacity: 0.9">
-    <a-text value="What is the Earth's largest continent?" position="0 0.5 0" color="black" width="2.5"></a-text>
-    <a-entity id="option1" geometry="primitive: plane; height: 0.4; width: 2.5" position="0 -0.3 0" material="color: lightblue">
-      <a-text value="1. Asia" position="0 0 0.01" color="black" width="2.5"></a-text>
     </a-entity>
-    <a-entity id="option2" geometry="primitive: plane; height: 0.4; width: 2.5" position="0 -0.8 0" material="color: lightblue">
-      <a-text value="2. Africa" position="0 0 0.01" color="black" width="2.5"></a-text>
+
+    <!-- Quiz Panel -->
+    <a-entity id="quiz-panel" visible="false" position="0 1.5 -3" geometry="primitive: plane; height: 2; width: 3"
+      material="color: white; opacity: 0.9">
+      <a-text value="What is the Earth's largest continent?" position="0 0.5 0" color="black" width="2.5"></a-text>
+      <a-entity id="option1" geometry="primitive: plane; height: 0.4; width: 2.5" position="0 -0.3 0"
+        material="color: lightblue">
+        <a-text value="1. Asia" position="0 0 0.01" color="black" width="2.5"></a-text>
+      </a-entity>
+      <a-entity id="option2" geometry="primitive: plane; height: 0.4; width: 2.5" position="0 -0.8 0"
+        material="color: lightblue">
+        <a-text value="2. Africa" position="0 0 0.01" color="black" width="2.5"></a-text>
+      </a-entity>
     </a-entity>
-  </a-entity>
-</a-scene>
+  </a-scene>
 
-<script>
-  const sceneEl = document.querySelector('a-scene');
-  sceneEl.addEventListener('loaded', () => {
-    console.log('All assets are loaded, AR is starting.');
-  });
-  
-  // JavaScript for interactivity
-  document.querySelector('#earth-sphere').addEventListener('click', () => {
-    const quizPanel = document.querySelector('#quiz-panel');
-    quizPanel.setAttribute('visible', true);
-    const camera = document.querySelector('[gps-new-camera]');
+  <script>
+    const sceneEl = document.querySelector('a-scene');
+    sceneEl.addEventListener('loaded', () => {
+      console.log('All assets are loaded, AR is starting.');
+    });
 
-    // Adjust the position of the quiz panel dynamically near the camera
-    const cameraPosition = camera.object3D.position;
-    quizPanel.object3D.position.set(cameraPosition.x, cameraPosition.y + 1.5, cameraPosition.z - 3);
-  });
+    // JavaScript for interactivity
+    document.querySelector('#earth-sphere').addEventListener('click', () => {
+      const quizPanel = document.querySelector('#quiz-panel');
+      quizPanel.setAttribute('visible', true);
+      const camera = document.querySelector('[gps-new-camera]');
 
-  // Add event listeners to quiz options for feedback
-  document.querySelector('#option1').addEventListener('click', () => {
-    alert('Correct! Asia is the largest continent.');
-  });
+      // Adjust the position of the quiz panel dynamically near the camera
+      const cameraPosition = camera.object3D.position;
+      quizPanel.object3D.position.set(cameraPosition.x, cameraPosition.y + 1.5, cameraPosition.z - 3);
+    });
 
-  document.querySelector('#option2').addEventListener('click', () => {
-    alert('Incorrect. The correct answer is Asia.');
-  });
-</script>
+    // Add event listeners to quiz options for feedback
+    document.querySelector('#option1').addEventListener('click', () => {
+      alert('Correct! Asia is the largest continent.');
+    });
+
+    document.querySelector('#option2').addEventListener('click', () => {
+      alert('Incorrect. The correct answer is Asia.');
+    });
+  </script>
 
 </body>
+
 </html>

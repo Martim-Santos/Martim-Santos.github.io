@@ -5,20 +5,54 @@
 <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
 <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/three.js/build/ar-threex-location-only.js'></script>
 <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js'></script>
+<style>
+  /* Style for the pop-up */
+  #popup {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    display: none; /* Hidden by default */
+    z-index: 10;
+  }
+</style>
 </head>
 <body>
+<!-- Pop-up HTML -->
+<div id="popup">
+  <p>You clicked on Earth!</p>
+  <button onclick="closePopup()">Close</button>
+</div>
+
 <a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false' renderer='antialias: true; alpha: true'>
     <a-assets>
       <img id="earth-image" src="images/earth-sphere.jpg">
     </a-assets>  
     <a-camera gps-new-camera='gpsMinDistance: 5'></a-camera>
     <a-entity 
-      material='src: #earth-image; opacity: 0.9' 
-      geometry='primitive: sphere'  
-      gps-new-entity-place="latitude: 39.599564; longitude: -8.391645" 
-      scale="5 5 5"
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 8000">
+        material='src: #earth-image; opacity: 0.9' 
+        geometry='primitive: sphere'  
+        gps-new-entity-place="latitude: 39.599564; longitude: -8.391645" 
+        scale="5 5 5"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 8000"
+        event-set__click="material.color: blue"  <!-- Optional visual feedback -->
+        onclick="showPopup()">
     </a-entity>
 </a-scene>
+
+<script>
+  // Function to show the pop-up
+  function showPopup() {
+    document.getElementById('popup').style.display = 'block';
+  }
+
+  // Function to hide the pop-up
+  function closePopup() {
+    document.getElementById('popup').style.display = 'none';
+  }
+</script>
 </body>
 </html>

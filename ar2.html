@@ -11,29 +11,29 @@
           color: { type: 'string', default: 'white' } // Default plane color
         },
         init() {
-          this.plane = null; // Store plane reference
           this.el.addEventListener('click', this.showPlane.bind(this)); // Click event
         },
         showPlane() {
-          if (this.plane) return; // Prevent multiple planes for one sphere
-
           const scene = document.querySelector('a-scene');
 
-          // Create a plane
-          this.plane = document.createElement('a-plane');
-          this.plane.setAttribute('position', '0 1 -3'); // In front of the camera
-          this.plane.setAttribute('width', '2');
-          this.plane.setAttribute('height', '1');
-          this.plane.setAttribute('color', this.data.color); // Set color from schema
-          this.plane.setAttribute('material', 'opacity: 0.8; transparent: true');
+          // Check if a plane already exists
+          if (document.querySelector('#infoPlane')) return; // Do nothing if a plane is present
 
-          // Clicking the plane removes it
-          this.plane.addEventListener('click', () => {
-            scene.removeChild(this.plane);
-            this.plane = null; // Allow recreation
+          // Create a new plane
+          const plane = document.createElement('a-plane');
+          plane.setAttribute('position', '0 1 -3'); // In front of the camera
+          plane.setAttribute('width', '2');
+          plane.setAttribute('height', '1');
+          plane.setAttribute('color', this.data.color);
+          plane.setAttribute('material', 'opacity: 0.8; transparent: true');
+          plane.setAttribute('id', 'infoPlane'); // Unique ID to track the plane
+
+          // Clicking the plane itself removes it
+          plane.addEventListener('click', () => {
+            scene.removeChild(plane);
           });
 
-          scene.appendChild(this.plane);
+          scene.appendChild(plane);
         }
       });
     </script>

@@ -7,12 +7,10 @@
   <script>
     AFRAME.registerComponent('mouse-over-red', {
       init() {
-        this.el.addEventListener('mouseenter', this.mouseenter);
+        this.el.addEventListener('mouseenter', () => alert("Mouse Enter red"));
         this.el.addEventListener('mouseleave', this.mouseleave);
       },
-      mouseenter(evt) {
-         alert("Mouse Enter red");
-      },
+    
       mouseleave(evt) {
          //alert("Mouse Leave red");  
       },

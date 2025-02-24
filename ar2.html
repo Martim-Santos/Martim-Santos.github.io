@@ -22,26 +22,30 @@
         init() {
           this.plane = null;
           
-          this.el.addEventListener('click', this.togglePlane.bind(this));
+          this.el.addEventListener('click', this.showPlane.bind(this));
         },
-        togglePlane() {
+        showPlane() {
+          if (this.plane) return; // Prevent creating multiple planes
+
           const scene = document.querySelector('a-scene');
+          
+          // Create the plane
+          this.plane = document.createElement('a-plane');
+          this.plane.setAttribute('position', '0 1 -3');
+          this.plane.setAttribute('width', '2');
+          this.plane.setAttribute('height', '1');
+          this.plane.setAttribute('color', 'white');
+          this.plane.setAttribute('material', 'opacity: 0.8; transparent: true');
+          this.plane.setAttribute('id', 'infoPlane');
 
-          if (this.plane) {
-            // Remove the plane if it exists
+          // Add a click event to remove itself when clicked
+          this.plane.addEventListener('click', () => {
             scene.removeChild(this.plane);
-            this.plane = null;
-          } else {
-            // Create a new plane
-            this.plane = document.createElement('a-plane');
-            this.plane.setAttribute('position', '0 1 -3');
-            this.plane.setAttribute('width', '2');
-            this.plane.setAttribute('height', '1');
-            this.plane.setAttribute('color', 'white');
-            this.plane.setAttribute('material', 'opacity: 0.8; transparent: true');
-
+            this.plane = null; // Reset reference so it can be created again
+          });
+          
             scene.appendChild(this.plane);
-          }
+          
         }
       });
     </script>

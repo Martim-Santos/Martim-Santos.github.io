@@ -32,7 +32,7 @@
     AFRAME.registerComponent('mouse-over-green', {
       init() {
           this.plane = null;
-          this.el.addEventListener('mouseenter', () => alert("Mouse Enter green"));
+          
           this.el.addEventListener('click', this.togglePlane.bind(this));
         },
         togglePlane() {

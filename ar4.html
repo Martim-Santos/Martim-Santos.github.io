@@ -8,7 +8,7 @@
     <script>
       AFRAME.registerComponent('dynamic-movement', {
         schema: {
-          type: { type: 'string' }, // "side", "spin", "updown"
+          type: { type: 'string' }, // "side", "spin"
           speed: { type: 'number', default: 0.00001 } // Speed of movement
         },
         init() {
@@ -33,11 +33,6 @@
             const newLat = this.originalLat + Math.cos(this.angle) * radius;
             const newLon = this.originalLon + Math.sin(this.angle) * radius;
             this.el.setAttribute('gps-new-entity-place', { latitude: newLat, longitude: newLon });
-          } else if (this.data.type === "updown") {
-            // Move up and down by modifying altitude (Y axis)
-            const offset = Math.sin(time / 1000) * 0.5; // Change height
-            this.el.setAttribute('position', {y: this.originalAlt + offset });
-            this.el.setAttribute('gps-new-entity-place', { latitude: this.originalLat, longitude: this.originalLon});
           }
         }
       });
@@ -50,9 +45,7 @@
 
       <a-entity cursor="rayOrigin:mouse">
         <a-sphere show-plane="color: red" radius="1.25" color="red" shadow 
-gps-new-entity-place="latitude: 39.479866; longitude: -8.337769;"
-          position="2,0,4;" 
-          dynamic-movement="type: updown; speed: 0.0002"></a-sphere>
+gps-new-entity-place="latitude: 39.479866; longitude: -8.337769;"></a-sphere>
       </a-entity>
       <a-entity cursor="rayOrigin:mouse">
         <a-sphere show-plane="color: blue" radius="1.25" color="blue" shadow
@@ -62,7 +55,7 @@ gps-new-entity-place="latitude: 39.479832; longitude: -8.337651"
       <a-entity cursor="rayOrigin:mouse">
         <a-sphere show-plane="color: green" radius="1.25" color="green" shadow
 gps-new-entity-place="latitude: 39.479923; longitude: -8.337721"
-          dynamic-movement="type: side; speed: 0.00002"></a-sphere>
+          dynamic-movement="type: side; speed: 0.0001"></a-sphere>
       </a-entity>
     </a-scene>
   </body>

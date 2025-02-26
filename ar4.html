@@ -14,7 +14,7 @@
         init() {
           this.originalLat = this.el.getAttribute('gps-new-entity-place').latitude;
           this.originalLon = this.el.getAttribute('gps-new-entity-place').longitude;
-          this.originalAlt = this.el.getAttribute('position') ? this.el.getAttribute('position').y : 0;
+          this.originalAlt = this.el.getAttribute('gps-new-entity-place').altitude;
           this.angle = 0;
         },
         tick(time, timeDelta) {

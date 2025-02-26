@@ -14,7 +14,7 @@
         init() {
           this.originalLat = this.el.getAttribute('gps-new-entity-place').latitude;
           this.originalLon = this.el.getAttribute('gps-new-entity-place').longitude;
-          this.originalAlt = this.el.getAttribute('gps-new-entity-place').altitude;
+          this.originalAlt = this.el.getAttribute('position') ? this.el.getAttribute('position').y : 0;
           this.angle = 0;
         },
         tick(time, timeDelta) {
@@ -36,7 +36,7 @@
           } else if (this.data.type === "updown") {
             // Move up and down by modifying altitude (Y axis)
             const offset = Math.sin(time / 1000) * 0.5; // Change height
-            this.el.setAttribute('gps-new-entity-place', { latitude: this.originalLat, altitude: this.originalAlt + offset, longitude: this.originalLon});
+            this.el.setAttribute('gps-new-entity-place', { latitude: this.originalLat, y: this.originalAlt + offset, longitude: this.originalLon});
           }
         }
       });
@@ -49,12 +49,13 @@
 
       <a-entity cursor="rayOrigin:mouse">
         <a-sphere show-plane="color: red" radius="1.25" color="red" shadow 
-gps-new-entity-place="latitude: 39.479866; longitude: -8.337769; altitude:0"
+gps-new-entity-place="latitude: 39.479866; longitude: -8.337769;"
           dynamic-movement="type: updown; speed: 0.002"></a-sphere>
       </a-entity>
       <a-entity cursor="rayOrigin:mouse">
         <a-sphere show-plane="color: blue" radius="1.25" color="blue" shadow
 gps-new-entity-place="latitude: 39.479832; longitude: -8.337651"
+          position="0 30 0"
           dynamic-movement="type: spin; speed: 0.002"></a-sphere>
       </a-entity>
       <a-entity cursor="rayOrigin:mouse">

@@ -35,7 +35,7 @@
             this.el.setAttribute('gps-new-entity-place', { latitude: newLat, longitude: newLon });
           } else if (this.data.type === "updown") {
             // Move up and down by modifying altitude (Y axis)
-            const offset = Math.sin(time / 1000) * speed; // Change height
+            const offset = Math.sin(time / 1000) * 0.5; // Change height
             this.el.setAttribute('gps-new-entity-place', { latitude: this.originalLat, altitude: this.originalAlt + offset, longitude: this.originalLon});
           }
         }

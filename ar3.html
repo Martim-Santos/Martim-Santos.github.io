@@ -40,17 +40,20 @@
   </head>
   <body>
     <a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false' renderer='antialias: true; alpha: true'>
+      <!-- GPS Camera -->
+      <a-camera gps-new-camera='gpsMinDistance: 5'></a-camera>
       <a-entity cursor="rayOrigin:mouse">
         <a-sphere show-plane="color: red" position="0 1.25 -5" radius="1.25" color="red" shadow 
 gps-new-entity-place="latitude: 39.599815; longitude: -8.390707"></a-sphere>
+      </a-entity>
+      <a-entity cursor="rayOrigin:mouse">
         <a-sphere show-plane="color: blue" position="5 1.25 -5" radius="1.25" color="blue" shadow
 gps-new-entity-place="latitude: 39.600243; longitude: -8.390524"></a-sphere>
+      </a-entity>
+      <a-entity cursor="rayOrigin:mouse">
         <a-sphere show-plane="color: white" position="-5 1.25 -5" radius="1.25" color="green" shadow
 gps-new-entity-place="latitude: 39.599418; longitude: -8.390860"></a-sphere>
       </a-entity>
-
-      <!-- GPS Camera -->
-      <a-camera gps-new-camera='gpsMinDistance: 5'></a-camera>
     </a-scene>
   </body>
 </html>

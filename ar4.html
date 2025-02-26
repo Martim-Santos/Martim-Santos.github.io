@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <title>AR.js A-Frame Dynamic Location</title>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script type="text/javascript" src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/three.js/build/ar-threex-location-only.js"></script>
+    <script type="text/javascript" src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+
+    <script>
+      AFRAME.registerComponent('dynamic-movement', {
+        schema: {
+          type: { type: 'string' }, // "side", "spin", "updown"
+          speed: { type: 'number', default: 0.00001 } // Speed of movement
+        },
+        init() {
+          this.originalLat = this.el.getAttribute('gps-new-entity-place').latitude;
+          this.originalLon = this.el.getAttribute('gps-new-entity-place').longitude;
+          this.originalAlt = this.el.getAttribute('position') ? this.el.getAttribute('position').y : 0;
+          this.angle = 0;
+        },
+        tick(time, timeDelta) {
+          const speed = this.data.speed;
+          if (this.data.type === "side") {
+            // Move side to side by modifying longitude
+            const offset = Math.sin(time / 1000) * speed;
+            this.el.setAttribute('gps-new-entity-place', {
+              latitude: this.originalLat,
+              longitude: this.originalLon + offset
+            });
+          } else if (this.data.type === "spin") {
+            // Move in a circular path around the camera
+            this.angle += speed * timeDelta;
+            const radius = 0.00005; // Distance from center
+            const newLat = this.originalLat + Math.cos(this.angle) * radius;
+            const newLon = this.originalLon + Math.sin(this.angle) * radius;
+            this.el.setAttribute('gps-new-entity-place', { latitude: newLat, longitude: newLon });
+          } else if (this.data.type === "updown") {
+            // Move up and down by modifying altitude (Y axis)
+            const offset = Math.sin(time / 1000) * 0.5; // Change height
+            this.el.setAttribute('position', { x: 0, y: this.originalAlt + offset, z: 0 });
+          }
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false">
+      <!-- GPS Camera -->
+      <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
+
+      <!-- Red Sphere (Moves Up and Down) -->
+      <a-entity gps-new-entity-place="latitude: 39.479866; longitude: -8.337769">
+        <a-sphere color="red" radius="1.25" shadow dynamic-movement="type: updown"></a-sphere>
+      </a-entity>
+
+      <!-- Blue Sphere (Spins Around the Camera) -->
+      <a-entity gps-new-entity-place="latitude: 39.479832; longitude: -8.337651">
+        <a-sphere color="blue" radius="1.25" shadow dynamic-movement="type: spin"></a-sphere>
+      </a-entity>
+
+      <!-- Green Sphere (Moves Side to Side) -->
+      <a-entity gps-new-entity-place="latitude: 39.479923; longitude: -8.337721">
+        <a-sphere color="green" radius="1.25" shadow dynamic-movement="type: side"></a-sphere>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>

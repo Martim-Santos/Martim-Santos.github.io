@@ -4,8 +4,6 @@ AFRAME.registerComponent('dynamic-movement', {
         this.originalLat = null;
         this.originalLon = null;
         this.angle = 0;
-
-        // Keep checking until gps-new-entity-place is available
         this.checkGPSData();
     },
     checkGPSData() {
@@ -14,16 +12,18 @@ AFRAME.registerComponent('dynamic-movement', {
         if (gpsData && gpsData.latitude !== undefined && gpsData.longitude !== undefined) {
             this.originalLat = gpsData.latitude;
             this.originalLon = gpsData.longitude;
-            console.log(`GPS initialized for ${this.data.type}:`, this.originalLat, this.originalLon);
+            console.log(`✅ GPS initialized for ${this.data}:`, this.originalLat, this.originalLon);
         } else {
-            // Retry after a short delay
+            console.warn(`⏳ Waiting for GPS data for ${this.data}...`);
             setTimeout(() => this.checkGPSData(), 500);
         }
     },
     tick(time, timeDelta) {
         if (this.originalLat === null || this.originalLon === null) return; // Wait for GPS data
 
-        const speed = 0.00001; // Adjust as needed
+        console.log(`🔄 Moving ${this.data} sphere...`);
+
+        const speed = 0.00001;
 
         if (this.data === "side") {
             // Green sphere moves left & right

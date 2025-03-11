@@ -1,24 +1,31 @@
 AFRAME.registerComponent('dynamic-movement', {
-    schema: { type: { type: 'string' }, speed: { type: 'number', default: 0.00001 } },
+    schema: { type: 'string', default: '' },
     init() {
-        // Delay initialization to ensure GPS coordinates are loaded
-        setTimeout(() => {
-            const gpsData = this.el.getAttribute('gps-new-entity-place');
-            if (!gpsData) {
-                console.error("GPS data not found for entity:", this.el);
-                return;
-            }
+        this.originalLat = null;
+        this.originalLon = null;
+        this.angle = 0;
+
+        // Keep checking until gps-new-entity-place is available
+        this.checkGPSData();
+    },
+    checkGPSData() {
+        const gpsData = this.el.getAttribute('gps-new-entity-place');
+
+        if (gpsData && gpsData.latitude !== undefined && gpsData.longitude !== undefined) {
             this.originalLat = gpsData.latitude;
             this.originalLon = gpsData.longitude;
-            this.angle = 0;
-        }, 1000); // Wait 1 second before accessing GPS data
+            console.log(`GPS initialized for ${this.data.type}:`, this.originalLat, this.originalLon);
+        } else {
+            // Retry after a short delay
+            setTimeout(() => this.checkGPSData(), 500);
+        }
     },
     tick(time, timeDelta) {
-        if (this.originalLat === undefined || this.originalLon === undefined) return; // Prevent errors
+        if (this.originalLat === null || this.originalLon === null) return; // Wait for GPS data
 
-        const speed = this.data.speed;
+        const speed = 0.00001; // Adjust as needed
 
-        if (this.data.type === "side") {
+        if (this.data === "side") {
             // Green sphere moves left & right
             const offset = Math.sin(time / 1000) * speed;
             this.el.setAttribute('gps-new-entity-place', {
@@ -26,7 +33,7 @@ AFRAME.registerComponent('dynamic-movement', {
                 longitude: this.originalLon + offset
             });
         } 
-        else if (this.data.type === "spin") {
+        else if (this.data === "spin") {
             // Blue sphere orbits around the camera
             this.angle += speed * timeDelta;
             const radius = 0.00005;

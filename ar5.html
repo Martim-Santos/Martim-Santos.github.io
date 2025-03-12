@@ -16,8 +16,8 @@
           speed: { type: 'number', default: 0.00001 } // Speed of movement
         },
         init() {
-          this.originalLat = this.el.getAttribute('gps-new-entity-place').latitude;
-          this.originalLon = this.el.getAttribute('gps-new-entity-place').longitude;
+          this.originalLat = this.el.parentElement.getAttribute('gps-new-entity-place').latitude;
+          this.originalLon = this.el.parentElement.getAttribute('gps-new-entity-place').longitude;
           this.angle = 0;
         },
         tick(time, timeDelta) {
@@ -25,7 +25,7 @@
           if (this.data.type === "side") {
             // Move side to side by modifying longitude
             const offset = Math.sin(time / 1000) * speed;
-            this.el.setAttribute('gps-new-entity-place', {
+            this.el.parentElement.setAttribute('gps-new-entity-place', {
               latitude: this.originalLat,
               longitude: this.originalLon + offset
             });
@@ -35,7 +35,7 @@
             const radius = 0.00005; // Distance from center
             const newLat = this.originalLat + Math.cos(this.angle) * radius;
             const newLon = this.originalLon + Math.sin(this.angle) * radius;
-            this.el.setAttribute('gps-new-entity-place', { latitude: newLat, longitude: newLon });
+            this.el.parentElement.setAttribute('gps-new-entity-place', { latitude: newLat, longitude: newLon });
           }
         }
       });
@@ -74,40 +74,37 @@
         }
       });
 
-      // Function to dynamically create spheres
-      function createSphere(lat, lon, color, type, speed) {
-        const sphere = document.createElement('a-sphere');
-        sphere.setAttribute('radius', '1.25');
-        sphere.setAttribute('color', color);
-        sphere.setAttribute('shadow', 'true');
+      // Function to dynamically create spheres inside entities
+      function createSpheres() {
+          const spheresData = [
+              { color: "red", lat: 39.479866, lon: -8.337769, movement: "side", speed: 0.0001 }, 
+              { color: "blue", lat: 39.479832, lon: -8.337651, movement: "spin", speed: 0.001 },
+              { color: "green", lat: 39.479923, lon: -8.337721, movement: "side", speed: 0.0001 }
+          ];
 
-        // Set the GPS location for the sphere
-        sphere.setAttribute('gps-new-entity-place', {
-          latitude: lat,
-          longitude: lon
-        });
+          const scene = document.querySelector("a-scene");
 
-        // Add dynamic movement component
-        sphere.setAttribute('dynamic-movement', {
-          type: type,   // 'side' or 'spin'
-          speed: speed  // Speed for movement
-        });
+          spheresData.forEach((data) => {
+              const entity = document.createElement("a-entity");
+              entity.setAttribute("gps-new-entity-place", `latitude: ${data.lat}; longitude: ${data.lon}`);
 
-        // Add show-plane component
-        sphere.setAttribute('show-plane', {
-          color: color  // Color of the plane
-        });
+              const sphere = document.createElement("a-sphere");
+              sphere.setAttribute("radius", "1.25");
+              sphere.setAttribute("color", data.color);
+              sphere.setAttribute("shadow", "");
+              sphere.setAttribute("show-plane", `color: ${data.color}`);
 
-        // Append the sphere to the scene
-        document.querySelector('a-scene').appendChild(sphere);
+              // Only add movement if the sphere has a movement type
+              if (data.movement) {
+                  sphere.setAttribute("dynamic-movement", `type: ${data.movement}; speed: ${data.speed}`);
+              }
+
+              entity.appendChild(sphere);
+              scene.appendChild(entity);
+          });
       }
 
-      // Dynamically create spheres with different colors, movement types, and speeds
-      window.onload = () => {
-        createSphere(39.479866, -8.337769, 'red', 'side', 0.0001);
-        createSphere(39.479832, -8.337651, 'blue', 'spin', 0.001);
-        createSphere(39.479923, -8.337721, 'green', 'side', 0.0001);
-      };
+      document.addEventListener("DOMContentLoaded", createSpheres);
     </script>
   </head>
   <body>

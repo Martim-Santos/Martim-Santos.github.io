@@ -24,11 +24,11 @@
               entity.setAttribute("cursor", "rayOrigin:mouse");
 
               const sphere = document.createElement("a-sphere");
-              sphere.setAttribute("gps-new-entity-place='latitude: ${data.lat}; longitude: ${data.lon}' ");
+              sphere.setAttribute("gps-new-entity-place", {latitude: ${data.lat}; longitude: ${data.lon}});
               sphere.setAttribute("radius", "1.25");
               sphere.setAttribute("color", data.color);
               sphere.setAttribute("shadow", "");
-              sphere.setAttribute("show-plane", "color: ${data.color}");
+              sphere.setAttribute("show-plane", {color: ${data.color}});
 
               // Only add movement if the sphere has a movement type
               if (data.movement) {

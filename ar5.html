@@ -9,6 +9,37 @@
     <script type="text/javascript" src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
     
     <script>
+      // Function to dynamically create spheres inside entities
+      function createSpheres() {
+          const spheresData = [
+              { color: "red", lat: 39.479866, lon: -8.337769, movement: "side", speed: 0.0001 }, 
+              { color: "blue", lat: 39.479832, lon: -8.337651, movement: "spin", speed: 0.001 },
+              { color: "green", lat: 39.479923, lon: -8.337721, movement: "side", speed: 0.0001 }
+          ];
+
+          const scene = document.querySelector("a-scene");
+
+          spheresData.forEach((data) => {
+              const entity = document.createElement("a-entity");
+              entity.setAttribute("gps-new-entity-place", `latitude: ${data.lat}; longitude: ${data.lon}`);
+
+              const sphere = document.createElement("a-sphere");
+              sphere.setAttribute("radius", "1.25");
+              sphere.setAttribute("color", data.color);
+              sphere.setAttribute("shadow", "");
+              sphere.setAttribute("show-plane", `color: ${data.color}`);
+
+              // Only add movement if the sphere has a movement type
+              if (data.movement) {
+                  sphere.setAttribute("dynamic-movement", `type: ${data.movement}; speed: ${data.speed}`);
+              }
+
+              entity.appendChild(sphere);
+              scene.appendChild(entity);
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", createSpheres);
       // Component for dynamic movement
       AFRAME.registerComponent('dynamic-movement', {
         schema: {
@@ -74,37 +105,7 @@
         }
       });
 
-      // Function to dynamically create spheres inside entities
-      function createSpheres() {
-          const spheresData = [
-              { color: "red", lat: 39.479866, lon: -8.337769, movement: "side", speed: 0.0001 }, 
-              { color: "blue", lat: 39.479832, lon: -8.337651, movement: "spin", speed: 0.001 },
-              { color: "green", lat: 39.479923, lon: -8.337721, movement: "side", speed: 0.0001 }
-          ];
-
-          const scene = document.querySelector("a-scene");
-
-          spheresData.forEach((data) => {
-              const entity = document.createElement("a-entity");
-              entity.setAttribute("gps-new-entity-place", `latitude: ${data.lat}; longitude: ${data.lon}`);
-
-              const sphere = document.createElement("a-sphere");
-              sphere.setAttribute("radius", "1.25");
-              sphere.setAttribute("color", data.color);
-              sphere.setAttribute("shadow", "");
-              sphere.setAttribute("show-plane", `color: ${data.color}`);
-
-              // Only add movement if the sphere has a movement type
-              if (data.movement) {
-                  sphere.setAttribute("dynamic-movement", `type: ${data.movement}; speed: ${data.speed}`);
-              }
-
-              entity.appendChild(sphere);
-              scene.appendChild(entity);
-          });
-      }
-
-      document.addEventListener("DOMContentLoaded", createSpheres);
+      
     </script>
   </head>
   <body>

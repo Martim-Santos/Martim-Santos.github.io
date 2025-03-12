@@ -32,7 +32,7 @@
 
               // Only add movement if the sphere has a movement type
               if (data.movement) {
-                  sphere.setAttribute("dynamic-movement", "type: ${data.movement}; speed: ${data.speed}");
+                  sphere.setAttribute("dynamic-movement", {type: data.movement, speed: data.speed}});
               }
 
               entity.appendChild(sphere);

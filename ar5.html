@@ -16,8 +16,8 @@
           speed: { type: 'number', default: 0.00001 } // Speed of movement
         },
         init() {
-          this.originalLat = this.el.parentElement.getAttribute('gps-new-entity-place').latitude;
-          this.originalLon = this.el.parentElement.getAttribute('gps-new-entity-place').longitude;
+          this.originalLat = this.el.getAttribute('gps-new-entity-place').latitude;
+          this.originalLon = this.el.getAttribute('gps-new-entity-place').longitude;
           this.angle = 0;
         },
         tick(time, timeDelta) {
@@ -25,7 +25,7 @@
           if (this.data.type === "side") {
             // Move side to side by modifying longitude
             const offset = Math.sin(time / 1000) * speed;
-            this.el.parentElement.setAttribute('gps-new-entity-place', {
+            this.el.setAttribute('gps-new-entity-place', {
               latitude: this.originalLat,
               longitude: this.originalLon + offset
             });
@@ -35,7 +35,7 @@
             const radius = 0.00005; // Distance from center
             const newLat = this.originalLat + Math.cos(this.angle) * radius;
             const newLon = this.originalLon + Math.sin(this.angle) * radius;
-            this.el.parentElement.setAttribute('gps-new-entity-place', { latitude: newLat, longitude: newLon });
+            this.el.setAttribute('gps-new-entity-place', { latitude: newLat, longitude: newLon });
           }
         }
       });

@@ -5,22 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AR.js A-Frame Solar System</title>
     <script>
-      function initPlanets() {
-          const systemId = 2;
-          const apiUrl = 'http://planetarysystemgo.ipt.pt/SolarSystemGO-2020/webservices/FrontEndServices/getsystem.php?id=2';
-          const planetData = '';
-        console.log(planetData);
-          fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => planetData = data)
-            .catch(error => console.error("Error fetching solar system data:", error));
-        console.log(planetData);
-      }
+  async function initPlanets() {
+    const systemId = 2;
+    const apiUrl = 'http://planetarysystemgo.ipt.pt/SolarSystemGO-2020/webservices/FrontEndServices/getsystem.php?id=' + systemId;
 
-      document.addEventListener("DOMContentLoaded", initPlanets);
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      console.log("Fetched planet data:", data);
 
-      
-    </script>
+      // Use `data` here to update your AR scene, UI, etc.
+    } catch (error) {
+      console.error("Error fetching solar system data:", error);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", initPlanets);
+</script>
   </head>
   <body>
 

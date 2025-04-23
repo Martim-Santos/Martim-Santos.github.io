@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR.js A-Frame Solar System</title>
+    <script>
+      function initPlanets() {
+          const systemId = 2;
+          const apiUrl = 'http://planetarysystemgo.ipt.pt/SolarSystemGO-2020/webservices/FrontEndServices/getsystem.php?id=2';
+          const planetData = '';
+          fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => planetData = data)
+            .catch(error => console.error("Error fetching solar system data:", error));
+        log.console(planetData)
+      }
+
+      document.addEventListener("DOMContentLoaded", initPlanets);
+
+      
+    </script>
+  </head>
+  <body>
+
+  </body>
+</html>

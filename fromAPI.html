@@ -31,7 +31,7 @@
               entity.setAttribute("cursor","rayOrigin:mouse");
 
               const sphere = document.createElement("a-sphere");
-              sphere.setAttribute("name", planetData.);
+              sphere.setAttribute("name", planetData.name);
               sphere.setAttribute("gps-new-entity-place", { latitude: coords.lat, longitude: coords.lon });
               sphere.setAttribute("radius", planet.radius);
               sphere.setAttribute("shadow", "");
@@ -64,7 +64,7 @@
       function initPlanets() {
           const systemId = 2;
           const apiUrl = 'http://planetarysystemgo.ipt.pt/SolarSystemGO-2020/webservices/FrontEndServices/getsystem.php?id=2';
-          const planetData = '';...
+          const planetData = '';
           fetch(apiUrl)
             .then(response => response.json())
             .then(data => planetData = data)

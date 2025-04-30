@@ -13,39 +13,31 @@
           const scene = document.querySelector("a-scene");
 
           planetData.forEach((planet, index) => {
-              const coords = computeOffset(userLat, userLon, planet.distance, 0); // Start at 0° angle
+              const coords = computeOffset(userLat, userLon, planet.distanciafoco1, 0); // Start at 0° angle
 
               const entity = document.createElement("a-entity");
               entity.setAttribute("cursor","rayOrigin:mouse");
 
               const sphere = document.createElement("a-sphere");
-              sphere.setAttribute("name", planetData.name);
+              sphere.setAttribute("name", planet.name);
               sphere.setAttribute("gps-new-entity-place", { latitude: coords.lat, longitude: coords.lon });
-              sphere.setAttribute("radius", planet.radius);
+              sphere.setAttribute("radius", planet.size);
               sphere.setAttribute("shadow", "");
-              sphere.setAttribute("show-plane", { color: planet.color });
+              sphere.setAttribute("show-plane", "white");
 
-              sphere.setAttribute("material", {src: planetData.texture, shader: "standard"});
+              sphere.setAttribute("material", {src: planet.texture, shader: "standard"});
 
               sphere.setAttribute("dynamic-movement", { 
                   type: "spin", 
                   speed: planet.speed, 
                   originLat: userLat, 
                   originLon: userLon, 
-                  distance: planet.distance 
+                  distance: planet.distanciafoco1 
               });
 
               entity.appendChild(sphere);
               scene.appendChild(entity);
 
-            planets.forEach((planet, index) => {
-      const sphere = document.createElement('a-sphere');
-      entity.setAttribute('radius', planet.size || 0.2);
-      entity.setAttribute('position', `${index * 0.5} 0 0`);
-      entity.setAttribute('color', planet.color || 'blue');
-
-      marker.appendChild(entity);
-    });
               console.log("planeta adicionado com sucesso");
           });
       }
@@ -83,7 +75,7 @@
           } else {
               console.error("Geolocation is not supported by this browser.");
           }
-      }
+      
 
       document.addEventListener("DOMContentLoaded", initPlanets);
 

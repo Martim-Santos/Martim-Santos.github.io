@@ -55,13 +55,7 @@
       const response = await fetch('system2.json'); // local file
       const data = await response.json();
       console.log("Loaded planet data:", data);
-
-      // You can now use the `data` to build your AR scene, etc.
-    } catch (error) {
-      console.error("Error loading local planet data:", error);
-    }
-          
-          if (navigator.geolocation) {
+      if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(
                   (position) => {
                       const userLat = position.coords.latitude;
@@ -74,6 +68,12 @@
           } else {
               console.error("Geolocation is not supported by this browser.");
           }
+      // You can now use the `data` to build your AR scene, etc.
+    } catch (error) {
+      console.error("Error loading local planet data:", error);
+    }
+          
+          
   }
       
 

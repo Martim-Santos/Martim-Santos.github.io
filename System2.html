@@ -60,7 +60,6 @@
     } catch (error) {
       console.error("Error loading local planet data:", error);
     }
-  }
           
           if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(
@@ -75,6 +74,7 @@
           } else {
               console.error("Geolocation is not supported by this browser.");
           }
+  }
       
 
       document.addEventListener("DOMContentLoaded", initPlanets);

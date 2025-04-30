@@ -25,8 +25,8 @@
               sphere.setAttribute("radius", planet.size);
               sphere.setAttribute("shadow", "");
               sphere.setAttribute("show-plane", "white");
-
-              sphere.setAttribute("material", {src: planet.texture, shader: "standard"});
+              const imgSrc = "data:image/jpeg;base64," + planet.texture;
+              sphere.setAttribute("material", {src: imgSrc, shader: "standard"});
 
               sphere.setAttribute("dynamic-movement", { 
                   type: "spin", 

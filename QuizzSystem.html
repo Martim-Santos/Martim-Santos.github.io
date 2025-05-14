@@ -46,96 +46,103 @@
     });
 
     AFRAME.registerComponent('proximity-check', {
-      schema: {
-        range: { type: 'number', default: 15 },
-        questions: { type: 'string', default: '[]' },
-        triggered: { type: 'boolean', default: false }
-      },
-      init() {
-        this.questions = JSON.parse(this.data.questions);
-        this.currentQuestionIndex = 0;
-        this.completed = false;
-      },
-      tick() {
-        if (this.completed || this.data.triggered) return;
+  schema: {
+    range: { type: 'number', default: 15 },
+    questions: { type: 'string', default: '[]' },
+    triggered: { type: 'boolean', default: false }
+  },
+  init() {
+    this.questions = JSON.parse(this.data.questions);
+    this.currentQuestionIndex = 0;
+    this.completed = false;
+    this.quizPlane = null;
+  },
+  tick() {
+    if (this.completed || this.data.triggered) return;
 
-        const camera = document.querySelector('[gps-new-camera]');
-        const camCoords = camera.components['gps-new-camera'].currentCoords;
-        if (!camCoords) return;
+    const camera = document.querySelector('[gps-new-camera]');
+    const camCoords = camera.components['gps-new-camera'].currentCoords;
+    if (!camCoords) return;
 
-        const entityCoords = this.el.getAttribute('gps-new-entity-place');
-        const dist = getDistanceFromLatLonInM(
-          camCoords.latitude,
-          camCoords.longitude,
-          entityCoords.latitude,
-          entityCoords.longitude
-        );
+    const entityCoords = this.el.getAttribute('gps-new-entity-place');
+    const dist = getDistanceFromLatLonInM(
+      camCoords.latitude,
+      camCoords.longitude,
+      entityCoords.latitude,
+      entityCoords.longitude
+    );
 
-        if (dist < this.data.range) {
-          this.data.triggered = true;
-          this.showNextQuestion();
-        }
-      },
-      showNextQuestion() {
-        const camera = document.querySelector('[gps-new-camera]');
-        const questionData = this.questions[this.currentQuestionIndex];
+    if (dist < this.data.range && !document.querySelector('#quizPlane')) {
+      this.data.triggered = true;
+      this.showNextQuestion();
+    }
+  },
+  showNextQuestion() {
+    const camera = document.querySelector('[gps-new-camera]');
+    const questionData = this.questions[this.currentQuestionIndex];
 
-        if (!questionData || document.querySelector('#quizPlane')) return;
-
-        const plane = document.createElement('a-plane');
-        plane.setAttribute('position', { x: 0, y: 0, z: -2 });
-        plane.setAttribute('width', 2);
-        plane.setAttribute('height', 1.8);
-        plane.setAttribute('color', '#333');
-        plane.setAttribute('material', { opacity: 0.95, transparent: true });
-        plane.setAttribute('id', 'quizPlane');
-        plane.setAttribute('look-at', '[gps-new-camera]');
-
-        const question = document.createElement('a-text');
-        question.setAttribute('value', questionData.question);
-        question.setAttribute('color', '#fff');
-        question.setAttribute('align', 'center');
-        question.setAttribute('position', '0 0.6 0');
-        question.setAttribute('width', 1.8);
-        plane.appendChild(question);
-
-        questionData.answers.forEach((answer, i) => {
-          const btn = document.createElement('a-plane');
-          btn.setAttribute('color', '#FFF');
-          btn.setAttribute('width', 1.6);
-          btn.setAttribute('height', 0.3);
-          btn.setAttribute('position', { x: 0, y: 0.3 - i * 0.35, z: 0.01 });
-          btn.setAttribute('material', { opacity: 0.8 });
-          btn.setAttribute('class', 'quiz-option');
-
-          const label = document.createElement('a-text');
-          label.setAttribute('value', answer);
-          label.setAttribute('color', '#000');
-          label.setAttribute('align', 'center');
-          label.setAttribute('position', '0 0 0.02');
-          label.setAttribute('width', 1.4);
-          btn.appendChild(label);
-
-          btn.addEventListener('click', () => {
-            if (i === questionData.rightAnswer) {
-              this.currentQuestionIndex++;
-              camera.removeChild(plane);
-              if (this.currentQuestionIndex < this.questions.length) {
-                setTimeout(() => this.showNextQuestion(), 1000);
-              } else {
-                this.completed = true;
-              }
-            } else {
-              btn.setAttribute('color', 'red');
-            }
-          });
-
-          plane.appendChild(btn);
-        });
-
-        camera.appendChild(plane);
+    // If all questions completed, stop showing quiz
+    if (!questionData) {
+      if (this.quizPlane && camera.contains(this.quizPlane)) {
+        camera.removeChild(this.quizPlane);
       }
+      this.completed = true;
+      return;
+    }
+
+    // Create quiz UI
+    const plane = document.createElement('a-plane');
+    plane.setAttribute('position', { x: 0, y: 0, z: -2 });
+    plane.setAttribute('width', 2);
+    plane.setAttribute('height', 1.8);
+    plane.setAttribute('color', '#333');
+    plane.setAttribute('material', { opacity: 0.95, transparent: true });
+    plane.setAttribute('id', 'quizPlane');
+    plane.setAttribute('look-at', '[gps-new-camera]');
+
+    const question = document.createElement('a-text');
+    question.setAttribute('value', questionData.question);
+    question.setAttribute('color', '#fff');
+    question.setAttribute('align', 'center');
+    question.setAttribute('position', '0 0.6 0');
+    question.setAttribute('width', 1.8);
+    plane.appendChild(question);
+
+    questionData.answers.forEach((answer, i) => {
+      const btn = document.createElement('a-plane');
+      btn.setAttribute('color', '#FFF');
+      btn.setAttribute('width', 1.6);
+      btn.setAttribute('height', 0.3);
+      btn.setAttribute('position', { x: 0, y: 0.3 - i * 0.35, z: 0.01 });
+      btn.setAttribute('material', { opacity: 0.8 });
+      btn.setAttribute('class', 'quiz-option');
+
+      const label = document.createElement('a-text');
+      label.setAttribute('value', answer);
+      label.setAttribute('color', '#000');
+      label.setAttribute('align', 'center');
+      label.setAttribute('position', '0 0 0.02');
+      label.setAttribute('width', 1.4);
+      btn.appendChild(label);
+
+      btn.addEventListener('click', () => {
+        if (i === questionData.rightAnswer) {
+          this.currentQuestionIndex++;
+          camera.removeChild(plane);
+          this.quizPlane = null;
+          setTimeout(() => this.showNextQuestion(), 100);
+        } else {
+          btn.setAttribute('color', 'red');
+        }
+      });
+
+      plane.appendChild(btn);
     });
+
+    camera.appendChild(plane);
+    this.quizPlane = plane;
+  }
+});
 
     async function initPlanets() {
       try {

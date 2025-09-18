@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Sphere Orbiting Through Ring (Eye Level)</title>
+    <title>Sphere Orbiting Through Horizontal Ring (Location AR)</title>
     <!-- A-Frame and AR.js Libraries -->
   <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/three.js/build/ar-threex-location-only.js"></script>
@@ -14,12 +14,12 @@
       vr-mode-ui="enabled: false"
       arjs="sourceType: webcam; gpsMinAccuracy: 100;"
     >
-      <!-- Ring at GPS location, horizontally cutting the sphere -->
+      <!-- Horizontal ring at eye level -->
       <a-ring
         id="ring"
         gps-entity-place="latitude: 37.7749; longitude: -122.4194;"
-        position="0 1.6 0"
-        rotation="0 0 0"  <!-- Ring vertical, cutting through XZ-plane -->
+        position="0 1.6 -2"  <!-- 2 meters in front of user -->
+        rotation="-90 0 0"   <!-- horizontal -->
         radius-inner="0.5"
         radius-outer="0.55"
         color="#FF0000"
@@ -29,7 +29,7 @@
       <a-sphere
         id="orbitSphere"
         gps-entity-place="latitude: 37.7749; longitude: -122.4194;"
-        position="0.5 1.6 0"
+        position="0.5 1.6 -2"  <!-- starting position, same depth as ring -->
         radius="0.5"
         color="#00FF00"
       ></a-sphere>
@@ -40,8 +40,8 @@
       <script>
         AFRAME.registerComponent('orbit', {
           schema: {
-            radius: {type: 'number', default: 0.5},
-            speed: {type: 'number', default: 1} // radians per second
+            radius: {type: 'number', default: 0.5}, // orbit radius
+            speed: {type: 'number', default: 1}     // radians/sec
           },
           init: function () {
             this.angle = 0;
@@ -49,12 +49,12 @@
           tick: function (time, timeDelta) {
             this.angle += (this.data.speed * timeDelta) / 1000;
             const x = this.data.radius * Math.cos(this.angle);
-            const z = this.data.radius * Math.sin(this.angle);
-            // Keep y fixed at eye level (1.6m)
+            const z = -2 + this.data.radius * Math.sin(this.angle); // match ring depth
             this.el.setAttribute('position', {x: x, y: 1.6, z: z});
           }
         });
 
+        // Attach orbit component to the sphere
         document.querySelector('#orbitSphere').setAttribute('orbit', 'radius:0.5; speed:1.5');
       </script>
     </a-scene>

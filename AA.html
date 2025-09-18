@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Sphere Orbiting Through Horizontal Ring (Location AR)</title>
+    <title>User-Centered Orbiting Sphere & Ring</title>
     <!-- A-Frame and AR.js Libraries -->
   <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/three.js/build/ar-threex-location-only.js"></script>
@@ -14,48 +14,73 @@
       vr-mode-ui="enabled: false"
       arjs="sourceType: webcam; gpsMinAccuracy: 100;"
     >
-      <!-- Horizontal ring at eye level -->
-      <a-ring
-        id="ring"
-        gps-entity-place="latitude: 37.7749; longitude: -122.4194;"
-        position="0 1.4 -2"  
-        rotation="-90 0 0"   
-        radius-inner="0.5"
-        radius-outer="0.55"
-        color="#FF0000"
-      ></a-ring>
-
-      <!-- Sphere orbiting the ring -->
-      <a-sphere
-        id="orbitSphere"
-        gps-entity-place="latitude: 37.7749; longitude: -122.4194;"
-        position="0.5 1.4 -2"
-        radius="0.25"
-        color="#00FF00"
-      ></a-sphere>
-
       <a-camera gps-camera rotation-reader></a-camera>
 
-      <!-- Orbit Script -->
       <script>
-        AFRAME.registerComponent('orbit', {
-          schema: {
-            radius: {type: 'number', default: 0.5}, // orbit radius
-            speed: {type: 'number', default: 1}     // radians/sec
-          },
-          init: function () {
-            this.angle = 0;
-          },
-          tick: function (time, timeDelta) {
-            this.angle += (this.data.speed * timeDelta) / 1000;
-            const x = this.data.radius * Math.cos(this.angle);
-            const z = -2 + this.data.radius * Math.sin(this.angle); // match ring depth
-            this.el.setAttribute('position', {x: x, y: 1.4, z: z});
+        // Configuration
+        const ringRadius = 0.5;       // Ring radius
+        const ringThickness = 0.05;   // Ring thickness
+        const sphereRadius = 0.25;    // Sphere size
+        const eyeLevel = 1.4;         // Slightly below eye level
+        const distanceFromUser = 5;   // Distance from user
+
+        // Function to create the ring
+        function createRing(lat, lon) {
+          const ring = document.createElement('a-ring');
+          ring.setAttribute('gps-entity-place', `latitude: ${lat}; longitude: ${lon}`);
+          ring.setAttribute('position', `0 ${eyeLevel} -${distanceFromUser}`);
+          ring.setAttribute('rotation', '-90 0 0'); // horizontal
+          ring.setAttribute('radius-inner', ringRadius);
+          ring.setAttribute('radius-outer', ringRadius + ringThickness);
+          ring.setAttribute('color', '#FF0000');
+          document.querySelector('a-scene').appendChild(ring);
+          return ring;
+        }
+
+        // Function to create the sphere
+        function createSphere(lat, lon) {
+          const sphere = document.createElement('a-sphere');
+          sphere.setAttribute('gps-entity-place', `latitude: ${lat}; longitude: ${lon}`);
+          sphere.setAttribute('position', `${ringRadius} ${eyeLevel} -${distanceFromUser}`);
+          sphere.setAttribute('radius', sphereRadius);
+          sphere.setAttribute('color', '#00FF00');
+          document.querySelector('a-scene').appendChild(sphere);
+          return sphere;
+        }
+
+        // Wait for GPS camera to get the user location
+        window.addEventListener('gps-camera-update-position', (event) => {
+          const userLat = event.detail.position.latitude;
+          const userLon = event.detail.position.longitude;
+
+          // Only create objects once
+          if (!document.querySelector('#orbitSphere')) {
+            const ring = createRing(userLat, userLon);
+            const sphere = createSphere(userLat, userLon);
+            sphere.setAttribute('id', 'orbitSphere');
+
+            // Orbit component
+            AFRAME.registerComponent('orbit', {
+              schema: {
+                radius: {type: 'number', default: ringRadius},
+                speed: {type: 'number', default: 1.5},
+                depth: {type: 'number', default: -distanceFromUser},
+                height: {type: 'number', default: eyeLevel}
+              },
+              init: function () {
+                this.angle = 0;
+              },
+              tick: function (time, timeDelta) {
+                this.angle += (this.data.speed * timeDelta) / 1000;
+                const x = this.data.radius * Math.cos(this.angle);
+                const z = this.data.depth + this.data.radius * Math.sin(this.angle);
+                this.el.setAttribute('position', {x: x, y: this.data.height, z: z});
+              }
+            });
+
+            sphere.setAttribute('orbit', `radius: ${ringRadius}; speed: 1.5; depth: -${distanceFromUser}; height: ${eyeLevel}`);
           }
         });
-
-        // Attach orbit component to the sphere
-        document.querySelector('#orbitSphere').setAttribute('orbit', 'radius:0.5; speed:1.5');
       </script>
     </a-scene>
   </body>

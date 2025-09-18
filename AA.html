@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Orbiting Sphere on Ring (Location AR)</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.3.2/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://unpkg.com/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+  </head>
+  <body style="margin:0; overflow:hidden;">
+    <a-scene
+      embedded
+      vr-mode-ui="enabled: false"
+      arjs="sourceType: webcam; gpsMinAccuracy: 100;"
+    >
+      <!-- Ring at GPS location -->
+      <a-ring
+        id="ring"
+        gps-entity-place="latitude: 37.7749; longitude: -122.4194;"
+        rotation="-90 0 0"
+        radius-inner="1"
+        radius-outer="1.2"
+        color="#FF0000"
+      ></a-ring>
+
+      <!-- Sphere that will orbit -->
+      <a-sphere
+        id="orbitSphere"
+        gps-entity-place="latitude: 37.7749; longitude: -122.4194;"
+        position="1 0 0"
+        radius="0.2"
+        color="#00FF00"
+      ></a-sphere>
+
+      <a-camera gps-camera rotation-reader></a-camera>
+
+      <!-- Animation Script -->
+      <script>
+        AFRAME.registerComponent('orbit', {
+          schema: {
+            radius: {type: 'number', default: 1},
+            speed: {type: 'number', default: 0.5} // radians per second
+          },
+          init: function () {
+            this.angle = 0;
+          },
+          tick: function (time, timeDelta) {
+            this.angle += (this.data.speed * timeDelta) / 1000;
+            const x = this.data.radius * Math.cos(this.angle);
+            const z = this.data.radius * Math.sin(this.angle);
+            this.el.setAttribute('position', {x: x, y: 0.2, z: z});
+          }
+        });
+
+        // Attach the orbit component to the sphere
+        document.querySelector('#orbitSphere').setAttribute('orbit', 'radius:1; speed:1');
+      </script>
+    </a-scene>
+  </body>
+</html>

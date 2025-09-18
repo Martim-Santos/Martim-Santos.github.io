@@ -1,68 +1,56 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <title>User-Centered Orbiting Sphere & Ring</title>
+    <meta charset="utf-8">
+    <title>AR Planet Orbiting Ring</title>
     <!-- A-Frame and AR.js Libraries -->
   <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/three.js/build/ar-threex-location-only.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js"></script>
   </head>
   <body style="margin:0; overflow:hidden;">
-    <a-scene
-      embedded
-      vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; gpsMinAccuracy: 100;"
-    >
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; gpsMinAccuracy: 100;">
       <a-camera gps-camera rotation-reader></a-camera>
 
       <script>
         // Configuration
-        const ringRadius = 0.5;       // Ring radius
-        const ringThickness = 0.05;   // Ring thickness
-        const sphereRadius = 0.25;    // Sphere size
-        const eyeLevel = 1.4;         // Slightly below eye level
-        const distanceFromUser = 5;   // Distance from user
+        const eyeLevel = 1.4;          // slightly below eye level
+        const orbitRadius = 0.5;       // radius of planet orbit
+        const distanceFromUser = 2;    // distance of ring from user
+        const ringThickness = 0.05;    // ring thickness
+        const planetRadius = 0.25;     // sphere size
 
-        // Function to create the ring
-        function createRing(lat, lon) {
-          const ring = document.createElement('a-ring');
-          ring.setAttribute('gps-entity-place', `latitude: ${lat}; longitude: ${lon}`);
-          ring.setAttribute('position', `0 ${eyeLevel} -${distanceFromUser}`);
-          ring.setAttribute('rotation', '-90 0 0'); // horizontal
-          ring.setAttribute('radius-inner', ringRadius);
-          ring.setAttribute('radius-outer', ringRadius + ringThickness);
-          ring.setAttribute('color', '#FF0000');
-          document.querySelector('a-scene').appendChild(ring);
-          return ring;
-        }
-
-        // Function to create the sphere
-        function createSphere(lat, lon) {
-          const sphere = document.createElement('a-sphere');
-          sphere.setAttribute('gps-entity-place', `latitude: ${lat}; longitude: ${lon}`);
-          sphere.setAttribute('position', `${ringRadius} ${eyeLevel} -${distanceFromUser}`);
-          sphere.setAttribute('radius', sphereRadius);
-          sphere.setAttribute('color', '#00FF00');
-          document.querySelector('a-scene').appendChild(sphere);
-          return sphere;
-        }
-
-        // Wait for GPS camera to get the user location
+        // Create objects once GPS is available
         window.addEventListener('gps-camera-update-position', (event) => {
           const userLat = event.detail.position.latitude;
           const userLon = event.detail.position.longitude;
 
-          // Only create objects once
-          if (!document.querySelector('#orbitSphere')) {
-            const ring = createRing(userLat, userLon);
-            const sphere = createSphere(userLat, userLon);
-            sphere.setAttribute('id', 'orbitSphere');
+          // Only create once
+          if (!document.querySelector('#planetSphere')) {
+
+            // Create horizontal ring centered on user
+            const ring = document.createElement('a-ring');
+            ring.setAttribute('gps-entity-place', `latitude: ${userLat}; longitude: ${userLon}`);
+            ring.setAttribute('position', `0 ${eyeLevel} -${distanceFromUser}`);
+            ring.setAttribute('rotation', '-90 0 0'); // horizontal
+            ring.setAttribute('radius-inner', orbitRadius);
+            ring.setAttribute('radius-outer', orbitRadius + ringThickness);
+            ring.setAttribute('color', '#FF0000');
+            document.querySelector('a-scene').appendChild(ring);
+
+            // Create planet sphere
+            const sphere = document.createElement('a-sphere');
+            sphere.setAttribute('id', 'planetSphere');
+            sphere.setAttribute('gps-entity-place', `latitude: ${userLat}; longitude: ${userLon}`);
+            sphere.setAttribute('position', `${orbitRadius} ${eyeLevel} -${distanceFromUser}`);
+            sphere.setAttribute('radius', planetRadius);
+            sphere.setAttribute('color', '#00FF00');
+            document.querySelector('a-scene').appendChild(sphere);
 
             // Orbit component
             AFRAME.registerComponent('orbit', {
               schema: {
-                radius: {type: 'number', default: ringRadius},
+                radius: {type: 'number', default: orbitRadius},
                 speed: {type: 'number', default: 1.5},
                 depth: {type: 'number', default: -distanceFromUser},
                 height: {type: 'number', default: eyeLevel}
@@ -78,7 +66,7 @@
               }
             });
 
-            sphere.setAttribute('orbit', `radius: ${ringRadius}; speed: 1.5; depth: -${distanceFromUser}; height: ${eyeLevel}`);
+            sphere.setAttribute('orbit', `radius: ${orbitRadius}; speed: 1.5; depth: -${distanceFromUser}; height: ${eyeLevel}`);
           }
         });
       </script>

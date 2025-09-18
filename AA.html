@@ -30,7 +30,7 @@
         id="orbitSphere"
         gps-entity-place="latitude: 37.7749; longitude: -122.4194;"
         position="0.5 1.4 -2"
-        radius="0.5"
+        radius="0.25"
         color="#00FF00"
       ></a-sphere>
 
@@ -50,7 +50,7 @@
             this.angle += (this.data.speed * timeDelta) / 1000;
             const x = this.data.radius * Math.cos(this.angle);
             const z = -2 + this.data.radius * Math.sin(this.angle); // match ring depth
-            this.el.setAttribute('position', {x: x, y: 1.6, z: z});
+            this.el.setAttribute('position', {x: x, y: 1.4, z: z});
           }
         });
 

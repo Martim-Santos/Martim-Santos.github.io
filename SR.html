@@ -1,0 +1,63 @@
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>AR Planet Orbiting Ring</title>
+    <!-- A-Frame and AR.js Libraries -->
+    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js"></script>
+  </head>
+  <body style="margin:0; overflow:hidden;">
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; gpsMinAccuracy: 100;">
+      <a-camera gps-camera rotation-reader></a-camera>
+
+      <script>
+        const eyeLevel = 1.4;
+        const orbitRadius = 0.5;
+        const distanceFromUser = 2;
+        const ringThickness = 0.05;
+        const planetRadius = 0.25;
+
+        window.addEventListener('gps-camera-update-position', (event) => {
+          const userLat = event.detail.position.latitude;
+          const userLon = event.detail.position.longitude;
+
+          if (!document.querySelector('#orbitSystem')) {
+            // Create orbit system (a parent entity)
+            const orbitSystem = document.createElement('a-entity');
+            orbitSystem.setAttribute('id', 'orbitSystem');
+            orbitSystem.setAttribute('gps-entity-place', `latitude: ${userLat}; longitude: ${userLon}`);
+            orbitSystem.setAttribute('position', `0 ${eyeLevel} -${distanceFromUser}`);
+            document.querySelector('a-scene').appendChild(orbitSystem);
+
+            // Add a ring (static visual orbit track)
+            const ring = document.createElement('a-ring');
+            ring.setAttribute('rotation', '-90 0 0');
+            ring.setAttribute('radius-inner', orbitRadius);
+            ring.setAttribute('radius-outer', orbitRadius + ringThickness);
+            ring.setAttribute('color', '#FF0000');
+            orbitSystem.appendChild(ring);
+
+            // Add planet (child of orbitSystem, offset along X)
+            const sphere = document.createElement('a-sphere');
+            sphere.setAttribute('position', `${orbitRadius} 0 0`);
+            sphere.setAttribute('radius', planetRadius);
+            sphere.setAttribute('color', '#00FF00');
+            orbitSystem.appendChild(sphere);
+
+            // Orbit animation: rotate parent
+            orbitSystem.setAttribute('animation', {
+              property: 'rotation',
+              to: `0 360 0`,
+              loop: true,
+              dur: 8000,   // one full orbit every 8s
+              easing: 'linear'
+            });
+          }
+        });
+      </script>
+    </a-scene>
+  </body>
+</html>
+```
